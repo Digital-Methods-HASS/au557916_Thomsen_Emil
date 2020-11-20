@@ -16,13 +16,21 @@ head(population)
 data <- vector() #create empty vector for interim municipality values through time
 final <- NULL #create empty object for final values
 
-for (i in population$Municipalities){
-  x <- abortions %>% select(distinct(Municipalities == i))  
+
+for (i in population$Municipalities){ 
   for (j in 1995:2018){ # check that correct columns are grabbed, use 2:ncol
-    newvalue <- as.numeric(abortions[x,j])/as.numeric(population[i,j])
-    data <- c(data, newvalue) # check if it survives outside the loop
-  }
-  final <- rbind(final, data)
+    data <- NULL
+    abort_mun <- abortions %>% # find the municipality row in abortions for that municipality and for Alle aldre
+          filter(Municipalities == i, Alder == "Alle aldre") %>% 
+          select(as.character(j))
+    pop_mun <- population %>% # find the value in population for year and municiality 
+          filter(Municipalities == i) %>% 
+          select(as.character(j))
+       newvalue <- as.numeric(abort_mun)/pop_mun
+     #  print(newvalue)}}
+       data <- c(data, newvalue) # DOES NOT WORK-Look up 'combining values into a digital object'
+    } 
+    final <- rbind(final, data)
 }
 
 
