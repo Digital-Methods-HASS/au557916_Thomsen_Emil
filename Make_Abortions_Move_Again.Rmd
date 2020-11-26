@@ -1,0 +1,28 @@
+---
+title: "Make_Abortions_Move_Again"
+author: "Emil"
+date: "26/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r }
+
+library(tidyverse)
+library(gganimate) # Her loades en pakke til at kunne lave visualiseringer
+library(gapminder) #Her loades en pakke, som er et dataset over lande og sundhed.
+library(gifski) # Her loades en pakke, så vi kan vise visualiseringer som bevæger sig, længere nede.
+
+```
+
+
+```{r}
+
+
+
+```

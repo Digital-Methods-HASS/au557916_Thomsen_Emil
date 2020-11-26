@@ -1,3 +1,6 @@
+
+
+
 library(tidyverse)
 
 
@@ -104,3 +107,10 @@ total <- cbind(popDF[,1],df4) %>%
 
 #Next step of the proces is to make some beautiful visualisations based on the dataset "total" (which is the data set of abortions pr. capita) 
 #and to make visualisations on average income with ggplot (maybe) and then look for patterns and correlations. 
+
+#Writing our "total" Data Frame into a CSV file and naming it "Abor_Per_capita"
+write.csv(total,"au557916_Thomsen_Emil/Abor_Per_capita.csv", row.names = FALSE)
+
+
+
+
