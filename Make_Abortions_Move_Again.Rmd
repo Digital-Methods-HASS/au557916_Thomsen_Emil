@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 
@@ -19,9 +20,16 @@ library(gapminder) #Her loades en pakke, som er et dataset over lande og sundhed
 library(gifski) # Her loades en pakke, så vi kan vise visualiseringer som bevæger sig, længere nede.
 
 ```
-
+Okay, now that we have the tools we need from the library, we will download the data we would like to visualize
 
 ```{r}
+Abortions_per_capita_link <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/Abor_Per_capita.csv"
+
+
+abor_per_capita <- read_csv(url(Abortions_per_capita_link)) #Reading the CSV files with the links above.
+head(abor_per_capita) #Testing to see how the dataset looks. Problem letters like ÆØÅ, does not apear, but looks like this <f8>
+
+
 
 
 

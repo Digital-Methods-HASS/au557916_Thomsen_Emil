@@ -1,53 +1,32 @@
 
 
-
+install.packages("reshape2") #Is used to restructure data
+library(reshape2) #Is used to restructure data
 library(tidyverse)
 
 
 abortlink <- "https://raw.githubusercontent.com/RasmusVestiH/Final-Project/main/Rigtig_Data_CSV/Abortions_DK_1995_2018.csv"
 populationlink <- "https://raw.githubusercontent.com/RasmusVestiH/Final-Project/main/Rigtig_Data_CSV/Population_pr_municipalities.csv"
+incomelink <- "https://raw.githubusercontent.com/RasmusVestiH/Final-Project/main/Rigtig_Data_CSV/Income_male_and_female.csv"
 #Loading data from our datasets in github
 
 abortions <- read_csv(url(abortlink)) #Reading the CSV files with the links above.
 population <- read_csv(url(populationlink))
+income <- read_csv(url(incomelink))
 #Loading data from our datasets in github
 
 head(abortions) 
 head(population)
+head(income)
 #Checking how our datasets look.
 
 alleAldre <- filter(abortions, Alder == "Alle aldre") #Kode til at gemme et data frame så vi kun får alle aldre.
 
 alleAldre
 
-#______________________________________________________________________________________________________________________________________
-
-# this is Adela's guide without testing or having data, so it may still need troubleshooting, especially in grabbing correct columns
-
-data <- vector() #create empty vector for interim municipality values through time
-final <- NULL #create empty object for final values
-
-
-for (i in population$Municipalities){ 
-  for (j in 1995:2018){ # check that correct columns are grabbed, use 2:ncol
-    data <- NULL
-    abort_mun <- abortions %>% # find the municipality row in abortions for that municipality and for Alle aldre
-      filter(Municipalities == i, Alder == "Alle aldre") %>% 
-      select(as.character(j))
-    pop_mun <- population %>% # find the value in population for year and municiality 
-      filter(Municipalities == i) %>% 
-      select(as.character(j))
-    newvalue <- as.numeric(abort_mun)/pop_mun
-    #  print(newvalue)}}
-    data <- c(data, newvalue) # DOES NOT WORK-Look up 'combining values into a digital object'
-  } 
-  final <- rbind(final, data)
-}
-
-final
-view(final)
-
 #__________________________________________________________________________________________________________________________________
+
+
 
 abort_uden_udland <- abortions[!(abortions$Municipalities == "Udland mv."),]
 #here we are filtering out abortions performed on danish people in foreign countries, as they do not exist in our population dataset
@@ -64,6 +43,7 @@ abort_alle_aldre_uden_udland <- alleAldre[!(alleAldre$Municipalities == "Udland 
 
 abort_alle_aldre_uden_udland = subset(abort_alle_aldre_uden_udland, select = -c(Alder) )
 #here we are removing the column called "Alder" from the dataset as we do not need to see it because the datafram contains all ages acumulated.
+
 
 #______________________________________________________________________________________________________________________________________________
 
@@ -103,14 +83,53 @@ class(popDF) #popDF are tible and so are abortDF2, this means that we can make t
 df4 <- abortDF2[,2:25] / popDF[,2:25] * 100
 total <- cbind(popDF[,1],df4) %>% 
   .[1:96, ]
+
+income <- income[order(income$Municipalities),]
+income_uden_øer <- income[!(income$Municipalities == "Fanø" | income$Municipalities =="Samsø" | income$Municipalities =="Læsø"),]
+class(income_uden_øer)
+income_uden_øer_melt <- melt(income_uden_øer)
+class(income_uden_øer_melt)
+income_uden_øer_melt <- income_uden_øer_melt[order(income_uden_øer_melt$Municipalities),]
+income_uden_øer_melt <- tibble::as_tibble(income_uden_øer_melt)
+
+
+total_melt <- melt(total) # rearanges data so all years is put under one variable.
+
+total_melt <- total_melt[order(total_melt$Municipalities),] #They are put into alphabetical order
+
+total_melt <- tibble::as_tibble(total_melt) #Transforming it to tibble
+class(total_melt)
+
+
+
+final_df <- merge(total_melt, income_uden_øer_melt, by = c("Municipalities", "variable"))
+
+merge(x, y, by=c("k1","k2"))
+library(dplyr)
+
+class(final_df)
+final_df <- tibble::as_tibble(final_df)
+
+head(final_df)
+colnames(final_df)
+
+names(final_df)[names(final_df) == "variable"] <- "Year"
+names(final_df)[names(final_df) == "value.x"] <- "Abor_pr_capita"
+names(final_df)[names(final_df) == "value.y"] <- "Income_pr_capita"
+
+
+
 #_____________________________________________________________________________________________________________________________________________
+
+
+
+
 
 #Next step of the proces is to make some beautiful visualisations based on the dataset "total" (which is the data set of abortions pr. capita) 
 #and to make visualisations on average income with ggplot (maybe) and then look for patterns and correlations. 
 
 #Writing our "total" Data Frame into a CSV file and naming it "Abor_Per_capita"
 write.csv(total,"au557916_Thomsen_Emil/Abor_Per_capita.csv", row.names = FALSE)
-
 
 
 
