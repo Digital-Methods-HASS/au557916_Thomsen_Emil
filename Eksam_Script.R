@@ -1,5 +1,3 @@
-
-
 install.packages("reshape2") #Is used to restructure data
 library(reshape2) #Is used to restructure data
 library(tidyverse)
@@ -130,6 +128,3 @@ names(final_df)[names(final_df) == "value.y"] <- "Income_pr_capita"
 
 #Writing our "total" Data Frame into a CSV file and naming it "Abor_Per_capita"
 write.csv(total,"au557916_Thomsen_Emil/Abor_Per_capita.csv", row.names = FALSE)
-
-
-
