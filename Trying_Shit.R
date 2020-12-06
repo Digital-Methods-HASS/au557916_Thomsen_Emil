@@ -23,6 +23,7 @@ head(income)
 
 #__________________________________________________________________________________________________________________________________
 
+alleAldre <- filter(abortions, Alder == "Alle aldre") #Kode til at gemme et data frame så vi kun får alle aldre.
 
 
 abort_uden_udland <- abortions[!(abortions$Municipalities == "Udland mv."),]
@@ -334,25 +335,23 @@ df45_49 = as.data.frame(sapply(column_list45_49, as.numeric))
 AbortNumDF45_49 <- cbind(age45_49[,1],df45_49) %>% 
   .[1:96, ]
 
-
-#abortDF <- AbortNumDF[order(AbortNumDF$Municipalities),]
-
-AbortNumDF15_19 <- AbortNumDF15_19[order(AbortNumDF15_19$`age15_19[, 1]`),]
-AbortNumDF15_19 <- AbortNumDF15_19[,2:25] / popDF[,2:25] * 100
+#All of these loops above are similar, but creates different datasets depending on age groups
 
 
 
-AbortNumDF20_24
-AbortNumDF25_29
-AbortNumDF30_34
-AbortNumDF35_39
-AbortNumDF40_44
-AbortNumDF45_49
-#Here we are making a factor so we get abortions pr. capita in procent.
+
+###
+###
+### Sortering var her før
+###
+###
 
 
 
-#All of these loops are the same, but creates different datasets acording to agegroups
+
+
+
+
 
 
 names(AbortNumDF15_19)[names(AbortNumDF15_19) == "age15_19[, 1]"] <- "Municipalities"
@@ -369,7 +368,10 @@ names(AbortNumDF40_44)[names(AbortNumDF40_44) == "age40_44[, 1]"] <- "Municipali
 
 names(AbortNumDF45_49)[names(AbortNumDF45_49) == "age45_49[, 1]"] <- "Municipalities"
 
-#Here we are changing a column name that changed during the cleaning
+#Here we are changing a column name that changed during the cleaning, from "age15_19" To Municipalities
+
+
+
 
 
 #And now changing them to Tibble format
@@ -381,6 +383,62 @@ AbortNumDF30_34 <- tibble::as_tibble(AbortNumDF30_34)
 AbortNumDF35_39 <- tibble::as_tibble(AbortNumDF35_39)
 AbortNumDF40_44 <- tibble::as_tibble(AbortNumDF40_44)
 AbortNumDF45_49 <- tibble::as_tibble(AbortNumDF45_49)
+
+
+
+
+#abortDF <- AbortNumDF[order(AbortNumDF$Municipalities),]
+
+
+AbortNumDF15_19 <- AbortNumDF15_19[order(AbortNumDF15_19$Municipalities),]
+
+AbortNumDF20_24 <- AbortNumDF20_24[order(AbortNumDF20_24$Municipalities),]
+
+AbortNumDF25_29 <- AbortNumDF25_29[order(AbortNumDF25_29$Municipalities),]
+
+AbortNumDF30_34 <- AbortNumDF30_34[order(AbortNumDF30_34$Municipalities),]
+
+AbortNumDF35_39 <- AbortNumDF35_39[order(AbortNumDF35_39$Municipalities),]
+
+AbortNumDF40_44 <- AbortNumDF40_44[order(AbortNumDF40_44$Municipalities),]
+
+AbortNumDF45_49 <- AbortNumDF45_49[order(AbortNumDF45_49$Municipalities),]
+
+
+
+
+options(scipen=999)
+Abor_pr_capita15_19 <- AbortNumDF15_19[,2:25] / popDF[,2:25] * 100
+AbortNumDF15_19 <- cbind(popDF[,1],Abor_pr_capita15_19) %>% 
+  .[1:96, ]
+
+
+Abor_pr_capita20_24 <- AbortNumDF20_24[,2:25] / popDF[,2:25] * 100
+AbortNumDF20_24 <- cbind(popDF[,1],Abor_pr_capita20_24) %>% 
+  .[1:96, ]
+
+Abor_pr_capita25_29 <- AbortNumDF25_29[,2:25] / popDF[,2:25] * 100
+AbortNumDF25_29 <- cbind(popDF[,1],Abor_pr_capita25_29) %>% 
+  .[1:96, ]
+
+Abor_pr_capita30_34 <- AbortNumDF30_34[,2:25] / popDF[,2:25] * 100
+AbortNumDF30_34 <- cbind(popDF[,1],Abor_pr_capita30_34) %>% 
+  .[1:96, ]
+
+Abor_pr_capita35_39 <- AbortNumDF35_39[,2:25] / popDF[,2:25] * 100
+AbortNumDF35_39 <- cbind(popDF[,1],Abor_pr_capita35_39) %>% 
+  .[1:96, ]
+
+Abor_pr_capita40_44 <- AbortNumDF40_44[,2:25] / popDF[,2:25] * 100
+AbortNumDF40_44 <- cbind(popDF[,1],Abor_pr_capita40_44) %>% 
+  .[1:96, ]
+
+Abor_pr_capita45_49 <- AbortNumDF45_49[,2:25] / popDF[,2:25] * 100
+AbortNumDF45_49 <- cbind(popDF[,1],Abor_pr_capita45_49) %>% 
+  .[1:96, ]
+
+
+
 
 
 
@@ -446,7 +504,7 @@ final_df2 <- merge(final_df2, AbortNumDF45_49, by = c("Municipalities", "Year"))
 #and to make visualisations on average income with ggplot (maybe) and then look for patterns and correlations. 
 
 #Writing our "total" Data Frame into a CSV file and naming it "Abor_Per_capita"
-write.csv(total,"au557916_Thomsen_Emil/Abor_Per_capita.csv", row.names = FALSE)
+write.csv(final_df2,"au557916_Thomsen_Emil/Abor_Per_capita.csv", row.names = FALSE)
 
 
 
