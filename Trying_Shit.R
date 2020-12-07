@@ -504,7 +504,7 @@ final_df2 <- merge(final_df2, AbortNumDF45_49, by = c("Municipalities", "Year"))
 #and to make visualisations on average income with ggplot (maybe) and then look for patterns and correlations. 
 
 #Writing our "total" Data Frame into a CSV file and naming it "Abor_Per_capita"
-write.csv(final_df2,"au557916_Thomsen_Emil/Abor_Per_capita.csv", row.names = FALSE)
+write.csv(final_df2,"au557916_Thomsen_Emil/FinalDF2.csv", row.names = FALSE)
 
 
 

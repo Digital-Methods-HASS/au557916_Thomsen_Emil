@@ -97,7 +97,12 @@ ggplot(final_df, aes(x = Income_pr_capita, y = Abor_pr_capita, size = Income_pr_
           text = element_text(size = 16),
           plot.title = element_text(hjust = 0.5))
 
+
+
+
+
 ```
 
 
 
+#Emils kommentar
