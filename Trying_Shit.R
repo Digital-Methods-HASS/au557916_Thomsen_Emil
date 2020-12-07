@@ -21,6 +21,10 @@ head(income)
 
 
 
+
+
+
+
 #__________________________________________________________________________________________________________________________________
 
 alleAldre <- filter(abortions, Alder == "Alle aldre") #Kode til at gemme et data frame så vi kun får alle aldre.

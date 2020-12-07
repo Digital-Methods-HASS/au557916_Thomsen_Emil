@@ -18,6 +18,8 @@ library(tidyverse)
 library(gganimate) # Her loades en pakke til at kunne lave visualiseringer
 library(gifski) # Her loades en pakke, så vi kan vise visualiseringer som bevæger sig, længere nede.
 library(ggplot2)
+library(shiny)
+library(plotly)
 
 ```
 Okay, now that we have the tools we need from the library, we will download the data we would like to visualize
@@ -34,25 +36,80 @@ head(final_df)
 
 theme_set(theme_bw())  # set theme to white background for better visibility
 
-ggplot(subset(final_df, Year == 1995), aes(Abor_pr_capita, Municipalities, size = Income_pr_capita)) + 
+ggplot(subset(final_df2, Year == 2018), aes(Abor_pr_capita20_24, Municipalities, size = Income_pr_capita)) + 
   geom_point()
 
 
+
+
+
+ui <- fluidPage(
+    plotlyOutput("distPlot")
+)
+
+server <- function(input, output) {
+   output$distPlot <- renderPlotly({
+      qplot(Abor_pr_capita, Year, size = Income_pr_capita, color = Municipalities, data = final_df2) + 
+      geom_point()
+   })
+}
+
+shinyApp(ui = ui, server = server)
+
+
+
+#__________________________________________________________________
+ui <- fluidPage(
+    plotlyOutput("distPlot")
+)
+
+server <- function(input, output) {
+   output$distPlot <- renderPlotly({
+      qplot(Abor_pr_capita, Year, size = Income_pr_capita, color = Municipalities, data = final_df2) + 
+      geom_point()
+   })
+}
+
+shinyApp(ui = ui, server = server)
+
+#Cool visualisation that shows all the municipalities. and all years.
+
+#____________________________________________________________________
+
+ui <- fluidPage(
+    plotlyOutput("distPlot")
+)
+
+server <- function(input, output) {
+   output$distPlot <- renderPlotly({
+      ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=Abor_pr_capita, color =  Income_pr_capita)) +
+  geom_bar(stat="identity")
+   })
+}
+
+shinyApp(ui = ui, server = server)
 
 ```
 
 
 ```{r, Q2}
-final_df %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
+final_df2 %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
+  filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
+  select(Municipalities , Abor_pr_capita) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
+  arrange(desc(Abor_pr_capita)) #lastly, we arange our data in a decending order so we have the richest nation first.
+
+
+
+final_df2 %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
   filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
   select(Municipalities , Income_pr_capita) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
-  arrange(desc(Income_pr_capita)) #lastly, we arange our data in a decending order so we have the richest nation first.
+  arrange(desc(Income_pr_capita))
 
 ```
 
 ```{r}
 
-søjle <- ggplot(subset(final_df, Year == 2000), aes(x=Municipalities, y=Abor_pr_capita, color =  Income_pr_capita)) +
+søjle <- ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=Abor_pr_capita, color =  Income_pr_capita)) +
   geom_bar(stat="identity")
 
 søjle
@@ -98,11 +155,27 @@ ggplot(final_df, aes(x = Income_pr_capita, y = Abor_pr_capita, size = Income_pr_
           plot.title = element_text(hjust = 0.5))
 
 
+```
 
+```{r}
+options(scipen=999) #By adding this line of code we disable the scientific way of writing lables.
+ggplot(final_df2, aes(x = Income_pr_capita, y = Abor_pr_capita, size = Income_pr_capita))+
+  geom_point() + 
+ # scale_x_log10() + 
+  transition_time(Year) + 
+  labs(title = "{closest_state}", x = "Income per capita", y = "Abortions per capita") + 
+  transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE) +
+   theme(axis.text.x = element_text(size = 12), #here we change the size of the labels.
+          axis.text.y = element_text(size = 12),
+          text = element_text(size = 16),
+          plot.title = element_text(hjust = 0.5))
 
 
 ```
 
 
 
-#Emils kommentar
+
+
+
+
