@@ -27,11 +27,12 @@ head(income)
 
 #__________________________________________________________________________________________________________________________________
 
-alleAldre <- filter(abortions, Alder == "Alle aldre") #Kode til at gemme et data frame så vi kun får alle aldre.
+alleAldre <- filter(abortions, Alder == "Alle aldre") #Creating a dataframe, that only contains the acumulation of all abortions in each municipality
 
 
 abort_uden_udland <- abortions[!(abortions$Municipalities == "Udland mv."),]
 #here we are filtering out abortions performed on danish people in foreign countries, as they do not exist in our population dataset
+#This will be used later in the code.
 
 pop_uden_øer <- population[!(population$Municipalities == "Fanø" | population$Municipalities =="Samsø" | population$Municipalities =="Læsø"),]
 head(pop_uden_øer)
@@ -52,71 +53,99 @@ abort_alle_aldre_uden_udland = subset(abort_alle_aldre_uden_udland, select = -c(
 
 
 column_list <- abort_alle_aldre_uden_udland[,2:length(names(abort_alle_aldre_uden_udland))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+#For the abortions we had trouble with it being characters and not numeric. In this line we create "column_list" to make our values
+#numeric. column_list now consists of all columns except for the "Municipalities column.
+
+
 
 column_list_num <- NULL
-
 column_list_num <- as.numeric(column_list_num)
-for (col in column_list){
-  num_col <- as.numeric(col)
-  append(column_list_num, num_col)
+#here we create an empty object we will use in the for loop below.
+
+for (col in column_list){ #col is running through our recently created "column_list"
+  num_col <- as.numeric(col) #here we are making sure that "col"-values are numeric. and save them in the object "num_col"
+  append(column_list_num, num_col) #lastly in the loop we are appending "num_col" tol our empty object "column_list_num
 }
-column_list <- as.data.frame(column_list)
-df2 = as.data.frame(sapply(column_list, as.numeric))
+
+
+column_list <- as.data.frame(column_list) # Then we are making our column list into a data frame.
+df2 = as.data.frame(sapply(column_list, as.numeric)) # Since our column_list is still characters, we are making a new object and
+                                                     # Using sapply to get a numeric dataframe.
+
 AbortNumDF <- cbind(abort_alle_aldre_uden_udland[,1],df2) %>% 
   .[1:96, ]
-#In the end we append and cbind the variables to create a data frame called AbortNumDF to the first column of abort_alle_aldre_uden_udland
-#And thus creating AbortNumDF which is the data frame for creating and ordering the abortions data 
-
+#The last thing we do in this part is to combine the first column of abort_alle_aldre_uden_udland (The municipalities column) to our newly created df2 
+#Now we have a dataframe where all values are numeric, exept for the Municipalities column, which consists of characters.
 
 #___________________________________________________________________________________________________________________________________________
 
-abortDF <- AbortNumDF[order(AbortNumDF$Municipalities),] #Here we struggled with the index numbers not changing after ordering our data frame
-#By looking what class is it we aim to solve this
-
-class(abortDF) # Checking if this Data frame is the same as popDF. It was not, so we chaged it by making it into tible like popDF
-abortDF2 <- tibble::as_tibble(abortDF)
+#Now that we have our abortions as numbers we wanted to create a factor, that for abrotions per capita in the different municipalities. To find out 
+#how to do that we began trouble shouting and found out that if the data frames are identical in their length and structure we could devide them
+#by just saying AbortNumDF / popDF. This we learned from stackoverflow: "https://stackoverflow.com/questions/15177242/multiplying-two-data-frames"
 
 
 popDF <- pop_uden_øer[order(pop_uden_øer$Municipalities),]
-class(popDF) #popDF are tible and so are abortDF2, this means that we can make the factor now that show us abortions per capita in every municipality
+#popDF is an ordered (alphabetical) version of our filtered data set without the islands that we made earlier
+class(popDF) #The class of popDF is tbl_df
 
 
-df4 <- abortDF2[,2:25] / popDF[,2:25] * 100
-total <- cbind(popDF[,1],df4) %>% 
+AbortNumDF <- AbortNumDF[order(AbortNumDF$Municipalities),]
+#Here we struggled with the index numbers not changing after ordering our data frame
+#to investigate this we looked at the class of the dataframe:
+class(AbortNumDF) # Checking if this Data frame is the same as popDF. It was not, so we chaged it by making it into tible like popDF
+
+
+AbortNumDF <- tibble::as_tibble(AbortNumDF)
+#When made into a tbl_df the index problem was fixed and we got 2 identical data frames, which was what we aimed for.
+
+
+
+
+
+AbortNumDF <- AbortNumDF[,2:25] / popDF[,2:25] * 100 #In the end we multiply by 100 to get aborrions per capita in procent.
+AbortNumDF <- cbind(popDF[,1],AbortNumDF) %>% #again we have to cbind to join our new factor with the municipality column, as that was lost in the line above.
   .[1:96, ]
 
 income <- income[order(income$Municipalities),]
 income_uden_øer <- income[!(income$Municipalities == "Fanø" | income$Municipalities =="Samsø" | income$Municipalities =="Læsø"),]
 class(income_uden_øer)
-income_uden_øer_melt <- melt(income_uden_øer)
+#Here we make sure that our averidge income in municipalities data set matches the other data sets.
+
+
+# In order to create what Wilson et. al. (2017) call "analysis friendly data", we wanted to one column containing all years instead a column for each year.
+# To make this possible we went trouble shooting again and found the function melt, that was available in the reshape2 package.
+# This was also found at stackoverflow: https://stackoverflow.com/questions/16941111/r-cannot-melt-data-frame
+
+income_uden_øer_melt <- melt(data = income_uden_øer, id.vars = c("Municipalities"), measure.vars = c("1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"))
+#The way, melt works is by choosing a data set you wish to reshape. Then by id.vars we choose which columns should stay columns. while the measure.vars are reshaped into rows.
+
 class(income_uden_øer_melt)
 income_uden_øer_melt <- income_uden_øer_melt[order(income_uden_øer_melt$Municipalities),]
 income_uden_øer_melt <- tibble::as_tibble(income_uden_øer_melt)
+#Checking the class and making sure it is a tbl_df, while also ordering the data set by alphabetical order.
+
+AbortNumDF <- melt(data = AbortNumDF, id.vars = c("Municipalities"), measure.vars = c("1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"))
+ # same as above
+
+AbortNumDF <- AbortNumDF[order(AbortNumDF$Municipalities),] #They are put into alphabetical order
+
+AbortNumDF <- tibble::as_tibble(AbortNumDF) #Transforming it to tbl_df
 
 
-total_melt <- melt(total) # rearanges data so all years is put under one variable.
+# Lastly we wanted to merge our 2 data frames into one, so we only had to work with one, when we are creating visualizations.
+# To merge 2 dataframes, we learned from stackoverflow (https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right)
+# how to merge 2 data sets.
 
-total_melt <- total_melt[order(total_melt$Municipalities),] #They are put into alphabetical order
-
-total_melt <- tibble::as_tibble(total_melt) #Transforming it to tibble
-class(total_melt)
-
-
-
-final_df <- merge(total_melt, income_uden_øer_melt, by = c("Municipalities", "variable"))
-
+final_df <- merge(AbortNumDF, income_uden_øer_melt, by = c("Municipalities", "variable"))
+#We are merging whem by their 2 commen columns, Municipalities and variable.
 
 
 class(final_df)
 final_df <- tibble::as_tibble(final_df)
-
-head(final_df)
-colnames(final_df)
+#Transforming the df into tbl_df agian
 
 
-#Renaming variables
+#Renaming variables, so they make more sense to us.
 names(final_df)[names(final_df) == "variable"] <- "Year"
 names(final_df)[names(final_df) == "value.x"] <- "Abor_pr_capita"
 names(final_df)[names(final_df) == "value.y"] <- "Income_pr_capita"
@@ -125,7 +154,8 @@ names(final_df)[names(final_df) == "value.y"] <- "Income_pr_capita"
 
 #_____________________________________________________________________________________________________________________________________________
 
-#Now getting all age groupes in the dataset
+#Now getting all age groupes in the dataset. In this part of the code nothing new happens, we are simply creating data sets for the different age groups
+#That the original abortions data set precented and then merging them into one data set.
 
 age15_19 <- filter(abort_uden_udland, Alder == "15-19") 
 
@@ -205,8 +235,7 @@ age45_49 <- replace(as.data.frame(age45_49), age45_49 == "<5", 1)
 
 
 column_list15_19 <- age15_19[,2:length(names(age15_19))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num15_19 <- NULL
 
@@ -223,8 +252,7 @@ AbortNumDF15_19 <- cbind(age15_19[,1],df15_19) %>%
 
 
 column_list20_24 <- age20_24[,2:length(names(age20_24))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num20_24 <- NULL
 
@@ -243,8 +271,7 @@ AbortNumDF20_24 <- cbind(age20_24[,1],df20_24) %>%
 
 
 column_list25_29 <- age25_29[,2:length(names(age25_29))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num25_29 <- NULL
 
@@ -264,8 +291,7 @@ AbortNumDF25_29 <- cbind(age25_29[,1],df25_29) %>%
 
 
 column_list30_34 <- age30_34[,2:length(names(age30_34))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num30_34 <- NULL
 
@@ -284,8 +310,7 @@ AbortNumDF30_34 <- cbind(age30_34[,1],df30_34) %>%
 
 
 column_list35_39 <- age35_39[,2:length(names(age35_39))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num35_39 <- NULL
 
@@ -304,8 +329,7 @@ AbortNumDF35_39 <- cbind(age35_39[,1],df35_39) %>%
 
 
 column_list40_44 <- age40_44[,2:length(names(age40_44))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num40_44 <- NULL
 
@@ -324,8 +348,7 @@ AbortNumDF40_44 <- cbind(age40_44[,1],df40_44) %>%
 
 
 column_list45_49 <- age45_49[,2:length(names(age45_49))]
-#For the abortions we had trouble with it being characters and not numeric. In this code we make variables to take the numeric data and the looping
-#Them through every column to create a variable called column_list_num
+
 
 column_list_num45_49 <- NULL
 
@@ -339,22 +362,7 @@ df45_49 = as.data.frame(sapply(column_list45_49, as.numeric))
 AbortNumDF45_49 <- cbind(age45_49[,1],df45_49) %>% 
   .[1:96, ]
 
-#All of these loops above are similar, but creates different datasets depending on age groups
-
-
-
-
-###
-###
-### Sortering var her før
-###
-###
-
-
-
-
-
-
+#All of these loops above are similar, but creates different datasets depending on age groups.
 
 
 
@@ -389,9 +397,6 @@ AbortNumDF40_44 <- tibble::as_tibble(AbortNumDF40_44)
 AbortNumDF45_49 <- tibble::as_tibble(AbortNumDF45_49)
 
 
-
-
-#abortDF <- AbortNumDF[order(AbortNumDF$Municipalities),]
 
 
 AbortNumDF15_19 <- AbortNumDF15_19[order(AbortNumDF15_19$Municipalities),]
@@ -441,7 +446,7 @@ Abor_pr_capita45_49 <- AbortNumDF45_49[,2:25] / popDF[,2:25] * 100
 AbortNumDF45_49 <- cbind(popDF[,1],Abor_pr_capita45_49) %>% 
   .[1:96, ]
 
-
+#Creating abortions per capita in procent.
 
 
 
@@ -488,9 +493,6 @@ names(AbortNumDF40_44)[names(AbortNumDF40_44) == "value"] <- "Abor_pr_capita40_4
 names(AbortNumDF45_49)[names(AbortNumDF45_49) == "variable"] <- "Year"
 names(AbortNumDF45_49)[names(AbortNumDF45_49) == "value"] <- "Abor_pr_capita45_49"
 
-
-#All of these variables may not be the best way of organising the data, but it is one way to rearange data so we can get one
-#dataset where all different agegroups are in
 
 final_df2 <- merge(final_df, AbortNumDF15_19, by = c("Municipalities", "Year"))
 final_df2 <- merge(final_df2, AbortNumDF20_24, by = c("Municipalities", "Year"))
