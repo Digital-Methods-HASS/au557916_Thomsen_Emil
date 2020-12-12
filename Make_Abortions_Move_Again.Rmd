@@ -36,12 +36,19 @@ head(final_df)
 
 theme_set(theme_bw())  # set theme to white background for better visibility
 
-ggplot(subset(final_df2, Year == 2018), aes(Abor_pr_capita20_24, Municipalities, size = Income_pr_capita)) + 
+ggplot(subset(final_df, Year == 2018), aes(allAges, Municipalities, size = av_Income)) + 
   geom_point()
 
 
 
+```
 
+
+
+
+
+
+```{r}
 
 ui <- fluidPage(
     plotlyOutput("distPlot")
@@ -49,7 +56,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
-      qplot(Abor_pr_capita, Year, size = Income_pr_capita, color = Municipalities, data = final_df2) + 
+      qplot(allAges, Year, size = av_Income, color = Municipalities, data = final_df) + 
       geom_point()
    })
 }
@@ -65,14 +72,19 @@ ui <- fluidPage(
 
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
-      qplot(Abor_pr_capita, Year, size = Income_pr_capita, color = Municipalities, data = final_df2) + 
-      geom_point()
+        ggplot(subset(final_df05_18, Year == 2018), aes(allAges, av_age, size = av_Income, color = Municipalities)) + 
+        geom_point()
    })
 }
 
 shinyApp(ui = ui, server = server)
 
-#Cool visualisation that shows all the municipalities. and all years.
+#Cool visualisation that shows averidge abortions per capita on the x-axis and the average age in the different municipalities on the y-axis
+
+
+
+
+
 
 #____________________________________________________________________
 
@@ -82,7 +94,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
-      ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=Abor_pr_capita, color =  Income_pr_capita)) +
+      ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=allAges, color =  av_Income)) +
   geom_bar(stat="identity")
    })
 }
@@ -93,23 +105,23 @@ shinyApp(ui = ui, server = server)
 
 
 ```{r, Q2}
-final_df2 %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
+final_df %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
   filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
-  select(Municipalities , Abor_pr_capita) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
-  arrange(desc(Abor_pr_capita)) #lastly, we arange our data in a decending order so we have the richest nation first.
+  select(Municipalities , allAges) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
+  arrange(desc(allAges)) #lastly, we arange our data in a decending order so we have the richest nation first.
 
 
 
-final_df2 %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
+final_df05_18 %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
   filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
-  select(Municipalities , Income_pr_capita) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
-  arrange(desc(Income_pr_capita))
+  select(Municipalities , av_age) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
+  arrange((av_age))
 
 ```
 
 ```{r}
 
-søjle <- ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=Abor_pr_capita, color =  Income_pr_capita)) +
+søjle <- ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=allAges, color =  av_Income)) +
   geom_bar(stat="identity")
 
 søjle
@@ -122,10 +134,10 @@ søjle
 
 
 ```{r}
-kbh <- ggplot(subset(final_df, Municipalities == Municipalities[1:50]), aes( x = Year, y = Abor_pr_capita, size = Income_pr_capita, color = Municipalities)) +
+kbh <- ggplot(subset(final_df, Municipalities == Municipalities), aes( x = Year, y = allAges, size = av_Income)) +
   geom_point() + #geom_point() gør at vi får scatter plots altså prikker i vores kordinatsystem
   transition_time(Year) +
-  scale_x_log10() +
+  #scale_x_log10() +
   transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE)
 kbh
 
@@ -143,11 +155,11 @@ The code chunkbelow uses our final dataset to show the development in abortions 
 
 ```{r}
 options(scipen=999) #By adding this line of code we disable the scientific way of writing lables.
-ggplot(final_df, aes(x = Income_pr_capita, y = Abor_pr_capita, size = Income_pr_capita))+
+ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+
   geom_point() + 
  # scale_x_log10() + 
   transition_time(Year) + 
-  labs(title = "{closest_state}", x = "Income per capita", y = "Abortions per capita") + 
+  labs(title = "{closest_state}", x = "Averidge Income", y = "Abortions per capita") + 
   transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE) +
    theme(axis.text.x = element_text(size = 12), #here we change the size of the labels.
           axis.text.y = element_text(size = 12),
@@ -157,18 +169,15 @@ ggplot(final_df, aes(x = Income_pr_capita, y = Abor_pr_capita, size = Income_pr_
 
 ```
 
+
+
+
+
+
+
+
 ```{r}
-options(scipen=999) #By adding this line of code we disable the scientific way of writing lables.
-ggplot(final_df2, aes(x = Income_pr_capita, y = Abor_pr_capita, size = Income_pr_capita))+
-  geom_point() + 
- # scale_x_log10() + 
-  transition_time(Year) + 
-  labs(title = "{closest_state}", x = "Income per capita", y = "Abortions per capita") + 
-  transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE) +
-   theme(axis.text.x = element_text(size = 12), #here we change the size of the labels.
-          axis.text.y = element_text(size = 12),
-          text = element_text(size = 16),
-          plot.title = element_text(hjust = 0.5))
+
 
 
 ```

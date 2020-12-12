@@ -92,3 +92,37 @@ income <- melt(data = income, id.vars = c("Municipalities"), measure.vars = c("1
 income <- income %>% rename(Year = variable, av_Income = value)
 
 final_df <- merge(final_df, income, by =c("Municipalities", "Year"))
+
+
+#####
+#####
+#####
+
+averidgeagelink <- "https://raw.githubusercontent.com/RasmusVestiH/Final-Project/main/Rigtig_Data_CSV/Gennemsnits_alder.csv"
+averidgeage <- read_csv(url(averidgeagelink))
+#Introducing new data, that contains the averidge age from the different Municipalities
+
+
+av_age <- averidgeage[!(averidgeage$Municipalities == "Fanø" | averidgeage$Municipalities =="Samsø" | averidgeage$Municipalities =="Læsø" | averidgeage$Municipalities == "Christiansø"),]
+#Removing the municipalities, that does not exist in the abortions data set.
+
+
+
+av_agemelt <- av_age <- melt(data = av_age, id.vars = c("Municipalities"), mesure.vars = c("2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"))
+av_agemelt <- av_agemelt %>% rename(Year = variable, av_age = value)
+#Rearranging data and renaming columns
+
+
+
+av_agemelt <- tibble::as_tibble(av_agemelt) #Transforming df to tbl_df
+
+av_agemelt <- av_agemelt[order(av_agemelt$Municipalities),]#Putting data frame into alphabetical order.
+
+
+final_df05_18 <- merge(final_df, av_agemelt, by = c("Municipalities", "Year")) #Merging our final_df with the new age df.
+#This df only have data containing the years from 2005 - 2018 as we could not find data for the other years back.
+
+
+
+
+
