@@ -124,5 +124,6 @@ final_df05_18 <- merge(final_df, av_agemelt, by = c("Municipalities", "Year")) #
 
 
 
-
+write.csv(final_df,"au557916_Thomsen_Emil/final_df.csv", row.names = FALSE)
+write.csv(final_df05_18,"au557916_Thomsen_Emil/final_df05_18.csv", row.names = FALSE)
 
