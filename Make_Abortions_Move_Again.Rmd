@@ -25,10 +25,8 @@ library(plotly)
 Okay, now that we have the tools we need from the library, we will download the data we would like to visualize
 
 ```{r}
-head(final_df)
 
-
-
+head(final_df,26)
 ```
 
 
