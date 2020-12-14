@@ -25,8 +25,15 @@ library(plotly)
 Okay, now that we have the tools we need from the library, we will download the data we would like to visualize
 
 ```{r}
+finaldflink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/final_df.csv"
+finaldf05_18link <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/final_df05_18.csv"
+
+final_df <- read_csv(url(finaldflink))
+final_df05_18 <- read_csv(url(finaldf05_18link))
+
 
 head(final_df,26)
+head(final_df05_18, 26)
 ```
 
 
