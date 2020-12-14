@@ -2,7 +2,9 @@
 title: "Make_Abortions_Move_Again"
 author: "Emil"
 date: "26/11/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -31,7 +33,7 @@ finaldf05_18link <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au55
 final_df <- read_csv(url(finaldflink))
 final_df05_18 <- read_csv(url(finaldf05_18link))
 
-
+final_df
 head(final_df,26)
 head(final_df05_18, 26)
 ```

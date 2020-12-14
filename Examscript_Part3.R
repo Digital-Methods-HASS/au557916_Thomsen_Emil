@@ -135,6 +135,6 @@ final_df05_18 <- merge(final_df, av_agemelt, by = c("Municipalities", "Year")) #
 
 
 
-write.csv(final_df,"au557916_Thomsen_Emil/final_df_NoDanishLetters", row.names = FALSE)
-write.csv(final_df05_18,"au557916_Thomsen_Emil/final_df05_18_NoDanishLetters", row.names = FALSE)
+write.csv(final_df,"au557916_Thomsen_Emil/final_df_NoDanishLetters.csv", row.names = FALSE)
+write.csv(final_df05_18,"au557916_Thomsen_Emil/final_df05_18_NoDanishLetters.csv", row.names = FALSE)
 #Here we are writing our files into csv's so they can be downloaded and used by others
