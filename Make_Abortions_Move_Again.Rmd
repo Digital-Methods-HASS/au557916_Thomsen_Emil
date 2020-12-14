@@ -3,8 +3,9 @@ title: "Make_Abortions_Move_Again"
 author: "Emil"
 date: "26/11/2020"
 output:
-  pdf_document: default
   html_document: default
+  word_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -33,7 +34,6 @@ finaldf05_18link <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au55
 final_df <- read_csv(url(finaldflink))
 final_df05_18 <- read_csv(url(finaldf05_18link))
 
-final_df
 head(final_df,26)
 head(final_df05_18, 26)
 ```
@@ -57,6 +57,8 @@ ggplot(subset(final_df, Year == 2018), aes(allAges, Municipalities, size = av_In
 
 ```{r}
 
+#Scatter plot that shows abortions per person in all years and for all Municipalities
+
 ui <- fluidPage(
     plotlyOutput("distPlot")
 )
@@ -72,21 +74,54 @@ shinyApp(ui = ui, server = server)
 
 
 
+
+
+
+
+
+
 #__________________________________________________________________
+
+#This shows abortions per capita in relation to the municipalities averige age in 2018.
+
 ui <- fluidPage(
     plotlyOutput("distPlot")
 )
 
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
-        ggplot(subset(final_df05_18, Year == 2018), aes(allAges, av_age, size = av_Income, color = Municipalities)) + 
+        ggplot(subset(final_df05_18, Year == 2018), aes(x = allAges, y = av_age, size = av_Income, color = Municipalities)) + 
+       labs(title = "Abortions per capita and averige age", x = "Abortions pr capita", y = "Averige age")+
         geom_point()
    })
 }
 
 shinyApp(ui = ui, server = server)
 
-#Cool visualisation that shows averidge abortions per capita on the x-axis and the average age in the different municipalities on the y-axis
+
+
+
+
+
+#_______________________________________________________________
+
+#This visualization shows the growth in income in the differen municipalities from your 1995 to 2018.
+
+ui <- fluidPage(
+    plotlyOutput("distPlot")
+)
+
+server <- function(input, output) {
+   output$distPlot <- renderPlotly({
+      qplot(x = av_Income, y = Year, size = av_Income, color = Municipalities, data = final_df) + 
+       labs(title = "Income growth", x = "Averige Income in Municipalities", y = "Years")+
+      geom_point()
+   })
+}
+
+shinyApp(ui = ui, server = server)
+
+
 
 
 
@@ -95,61 +130,105 @@ shinyApp(ui = ui, server = server)
 
 #____________________________________________________________________
 
+#This visualization only shows Lolland, Langeland, Gentofte and Rudersdals data for the years 1995 to 2018 and their devellopment in abortions per capita as these Municipalities are approximately richest 2 municipalities and the poorest 
+
+small_big_df <- final_df[(final_df$Municipalities == "Lolland" | final_df$Municipalities =="Gentofte" | final_df$Municipalities =="Rudersdal" | final_df$Municipalities == "Langeland"),]
+
+small_big_df
+
+
 ui <- fluidPage(
     plotlyOutput("distPlot")
 )
 
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
-      ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=allAges, color =  av_Income)) +
-  geom_bar(stat="identity")
+      qplot(x = Year, y = allAges, size = av_Income, color = Municipalities, data = small_big_df) + 
+       labs(title = "Poor and Rich", x = "Years", y = "Abotions per capita in %")+
+      geom_point()
    })
 }
 
 shinyApp(ui = ui, server = server)
+
+
+
+
+
+
+#____________________________________________________---
+
+small_big_df05_18 <- final_df05_18[(final_df05_18$Municipalities == "Lolland" | final_df05_18$Municipalities =="Gentofte" | final_df05_18$Municipalities =="Rudersdal" | final_df05_18$Municipalities == "Langeland"),]
+
+small_big_df05_18
+
+
+
+ui <- fluidPage(
+    plotlyOutput("distPlot")
+)
+
+server <- function(input, output) {
+   output$distPlot <- renderPlotly({
+      qplot(x = Year, y = allAges, size = av_age, color = Municipalities, data = small_big_df05_18) + 
+       labs(title = "Averige age compared to abortions", x = "Year", y = "Abortion per capita")+
+      geom_point()
+   })
+}
+
+shinyApp(ui = ui, server = server)
+
+
+
+
+
+
+
+#_________________________________________________
+
+
+
 
 ```
 
 
 ```{r, Q2}
 final_df %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
-  filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
+  filter(Year == 2010) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
   select(Municipalities , allAges) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
   arrange(desc(allAges)) #lastly, we arange our data in a decending order so we have the richest nation first.
 
 
 
+
+
+
+
+
+
+final_df %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
+  filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
+  select(Municipalities , av_Income) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
+  arrange(desc(av_Income)) #lastly, we arange our data in a decending order so we have the richest nation first.
+
+
+
+
+
+
+
+
+
 final_df05_18 %>%  #We choose to look at the gapminder dataset and add pipes to it, so we can send an output of one fucntion directly to another.
   filter(Year == 2018) %>%  #First we filter the years in tha dataset so vi are only looking at data from 1952
-  select(Municipalities , av_age) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
-  arrange((av_age))
-
-```
-
-```{r}
-
-søjle <- ggplot(subset(final_df, Year == 2018), aes(x=Municipalities, y=allAges, color =  av_Income)) +
-  geom_bar(stat="identity")
-
-søjle
-
-
-
+  select(Municipalities , age40_44) %>% #then we select or choose to look at the countries and their gdpPercap, as everything else is irelevant right now
+  arrange(desc(age40_44))
 
 ```
 
 
 
-```{r}
-kbh <- ggplot(subset(final_df, Municipalities == Municipalities), aes( x = Year, y = allAges, size = av_Income)) +
-  geom_point() + #geom_point() gør at vi får scatter plots altså prikker i vores kordinatsystem
-  transition_time(Year) +
-  #scale_x_log10() +
-  transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE)
-kbh
 
-
-```
 
 
 
@@ -160,13 +239,13 @@ kbh
 
 The code chunkbelow uses our final dataset to show the development in abortions per capita in procent along with the average income in the different municipalities in Denmark.
 
-```{r}
+```{r Visualization of Devellopment if income and abortions 1995-2018}
 options(scipen=999) #By adding this line of code we disable the scientific way of writing lables.
 ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+
   geom_point() + 
  # scale_x_log10() + 
   transition_time(Year) + 
-  labs(title = "{closest_state}", x = "Averidge Income", y = "Abortions per capita") + 
+  labs(title = "Income and Abortions {closest_state}", x = "Averidge Income", y = "Abortions per capita in %") + 
   transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE) +
    theme(axis.text.x = element_text(size = 12), #here we change the size of the labels.
           axis.text.y = element_text(size = 12),
@@ -175,22 +254,6 @@ ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+
 
 
 ```
-
-
-
-
-
-
-
-
-```{r}
-
-
-
-```
-
-
-
 
 
 
