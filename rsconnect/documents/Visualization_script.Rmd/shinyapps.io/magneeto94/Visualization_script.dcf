@@ -5,8 +5,8 @@ account: magneeto94
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3438743
-bundleId: 4050658
+bundleId: 4050892
 url: https://magneeto94.shinyapps.io/Visualization_script/
-when: 1609598726.76094
+when: 1609605360.26921
 asMultiple: FALSE
 asStatic: FALSE

@@ -1,7 +1,7 @@
 ---
 title: "Visualizing Abortions in Denmark"
-author: "Emil"
-date: "26/11/2020"
+author: "Emil Buus Thomsen and Rasmus Vesti Hansen"
+date: "02/01/2021"
 output:
   html_document: default
   word_document: default
@@ -20,10 +20,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(gganimate)
-library(gifski) 
-library(ggplot2)
+#library(gifski)
+#library(ggplot2)
 library(shiny)
-library(plotly)
+#library(plotly)
 
 ```
 
@@ -34,13 +34,11 @@ Now that we have the tools we need from the library, we will download the data w
 
 ```{r uploading files}
 finaldflink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/final_df.csv"
-finaldf05_18link <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/final_df05_18.csv"
 
 final_df <- read_csv(url(finaldflink))
-final_df05_18 <- read_csv(url(finaldf05_18link))
 
 #head(final_df,26)
-#head(final_df05_18, 26) #Checking if the data looks as it tt
+
 ```
 
 
@@ -68,7 +66,7 @@ ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+
 
 
 This visualization shows the growth in income in the differen municipalities from your 1995 to 2018.
-```{r Visualization 3. Growth in income per in each municipality}
+```{r Visualization 2. Growth in income per in each municipality}
 ui <- fluidPage(
     plotlyOutput("distPlot")
 )
@@ -87,8 +85,8 @@ shinyApp(ui = ui, server = server)
 
 
 
-This visualization only shows Lolland, Langeland, Gentofte and Rudersdals data for the years 1995 to 2018 and their development in abortions per capita as these Municipalities are approximately richest 2 municipalities and the poorest 
-```{r Visualization 4. Devellopment for richest and poorest municipalities}
+This visualization only shows the municipalities of Lolland, Langeland, Gentofte and Rudersdals data for the years 1995 to 2018 and their development in abortions per capita as these Municipalities are approximately the richest 2 municipalities and the poorest 2
+```{r Visualization 3. Devellopment for richest and poorest municipalities}
 
 small_big_df <- final_df[(final_df$Municipalities == "Lolland" | final_df$Municipalities =="Gentofte" | final_df$Municipalities =="Rudersdal" | final_df$Municipalities == "Langeland"),] #creating a data frame that only consist of 4 municipalities.
 
@@ -118,7 +116,8 @@ shinyApp(ui = ui, server = server)
 
 
 This code chunk below a static interactive plot to investigate the development in abortions per capita for every year in each municipality.
-```{r Visualization 2.  scatter plot, abortions per person in all years}
+
+```{r Visualization 4.  scatter plot, abortions per person in all years}
 
 #Scatter plot that shows abortions per person in all years and for all Municipalities
 
@@ -129,13 +128,11 @@ ui <- fluidPage(
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
       qplot(allAges, Year, size = av_Income, color = Municipalities, data = final_df) + 
-      labs(title = "Visualization 4: of abortions per capita from 1995-2018", x = "Abortions per capita in %", y = "Years") +
+      labs(title = "Visualization 4: Abortions per capita from 1995-2018", x = "Abortions per capita in %", y = "Years") +
       geom_point()
    })
 }
 
 shinyApp(ui = ui, server = server)
-
-
 ```
 

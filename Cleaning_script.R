@@ -3,9 +3,9 @@ library(reshape2) #Is used to restructure data with the function melt
 library(tidyverse)
 
 
-abortlink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/Rigtig_Data_CSV/Abortions_DK_1995_2018.csv"
-populationlink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/Rigtig_Data_CSV/Population_pr_municipalities.csv"
-incomelink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/Rigtig_Data_CSV/Income_male_and_female.csv"
+abortlink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/OpenRefine_datasets/Abortions_DK_1995_2018.csv"
+populationlink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/OpenRefine_datasets/Population_pr_municipalities.csv"
+incomelink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/OpenRefine_datasets/Income_male_and_female.csv"
 
 
 abortions <- read_csv(url(abortlink)) #Reading the CSV files with the links above.
@@ -112,7 +112,7 @@ final_df <- merge(final_df, income, by =c("Municipalities", "Year"))
 
 
 
-averidgeagelink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/Rigtig_Data_CSV/Gennemsnits_alder.csv"
+averidgeagelink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/OpenRefine_datasets/Average_age_municipalities.csv"
 averidgeage <- read_csv(url(averidgeagelink))
 #Introducing new data, that contains the averidge age from the different Municipalities
 #TT spell average to avoid confusion later.
