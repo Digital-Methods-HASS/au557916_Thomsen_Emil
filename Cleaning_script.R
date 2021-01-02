@@ -16,7 +16,7 @@ income <- read_csv(url(incomelink))
 popuDF <- population[!(population$Municipalities == "Fanø" | population$Municipalities =="Samsø" | population$Municipalities =="Læsø"),]
 #Here removing islands from the data set as they do not occur in the in the abortions dataset.
 
-popuDF <- popuDF[order(popuDF$Municipalities),] #Now rearanging the data so it is alphabetical acording to municipalities.
+popuDF <- popuDF[order(popuDF$Municipalities),] #Now rearranging the data so it is alphabetical acording to municipalities.
 
 
 #We are now creating a function, because otherwise we would have to do this code chunk 8 times with more or less identical code.
@@ -25,7 +25,7 @@ ages <- function(agename){
   
   agegroup <-filter(abortions, Alder == agename) #Filtering so we only get the agegroup we wish for.
   agegroup <- agegroup[!(agegroup$Municipalities == "Udland mv."),] #removing data about danish people from foreign countries.
-  agegroup <- subset(agegroup, select = -c(Alder) ) #removing the column "Alder" as this funktion only looks at 1 agename, the one we select when we call the function
+  agegroup <- subset(agegroup, select = -c(Alder) ) #removing the column "Alder" as this function only looks at 1 agename, the one we select when we call the function
   
   agegroup <- replace(as.data.frame(agegroup), agegroup == "-", 0) #The tables that contains "-" or "<5" are replaced with "0" and "1" so they can be numeric the table only consist of charactors that can be numeric
   agegroup <- replace(as.data.frame(agegroup), agegroup == "<5", 1)
@@ -35,7 +35,7 @@ ages <- function(agename){
   numAgegroup <- agegroup[,2:length(names(agegroup))] #Removing the Municipalities column so we only have numbers left in the data set
   numAgegroup = as.data.frame(sapply(numAgegroup, as.numeric)) #Now making them numeric
   
-  numAgegroup <- numAgegroup[,1:24]/popuDF[,2:25]*100 #deviding the abortions data frame with the population dataframe and multiplying by 100 to get abortions per capita in %
+  numAgegroup <- numAgegroup[,1:24]/popuDF[,2:25]*100 #dividing the abortions data frame with the population dataframe and multiplying by 100 to get abortions per capita in %
   
   agegroup <- cbind(Municipalities=c(agegroup[,1]),numAgegroup) # combining the Municipalities names with their new values.
   
@@ -46,11 +46,14 @@ ages <- function(agename){
   agegroup <- melt(data = agegroup, id.vars = c("Municipalities"), mesure.vars = c("1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"))
   #Here we are using the melt-function from the reshape2 package, found in stackoverflow. The function takes id.vars and preserve them as they are
   # and take the mesure.vars and melts them into rows instead of columns. that way we instead get one column with all years and one with all abortions-values instead
-  
+  #TT function above should be measure.vars not mesure.vars
   
   agegroup <- agegroup %>% rename(Year = variable) #Renaming the column variable to "Year"
   #agegroup <- agegroup %>% rename(agename = value)
   #This line does not work, maybe because the rename can't take an argument?
+  #TT old and new names may be in the wrong order here https://www.geeksforgeeks.org/rename-columns-of-a-data-frame-in-r-programming-rename-function/
+  
+  
   
 }
 
@@ -112,7 +115,7 @@ final_df <- merge(final_df, income, by =c("Municipalities", "Year"))
 averidgeagelink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/Rigtig_Data_CSV/Gennemsnits_alder.csv"
 averidgeage <- read_csv(url(averidgeagelink))
 #Introducing new data, that contains the averidge age from the different Municipalities
-
+#TT spell average to avoid confusion later.
 
 av_age <- averidgeage[!(averidgeage$Municipalities == "Fanø" | averidgeage$Municipalities =="Samsø" | averidgeage$Municipalities =="Læsø" | averidgeage$Municipalities == "Christiansø"),]
 #Removing the municipalities, that does not exist in the abortions data set.

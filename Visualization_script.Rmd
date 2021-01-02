@@ -6,6 +6,7 @@ output:
   html_document: default
   word_document: default
   pdf_document: default
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -18,8 +19,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r }
 
 library(tidyverse)
-library(gganimate) # Her loades en pakke til at kunne lave visualiseringer
-library(gifski) # Her loades en pakke, så vi kan vise visualiseringer som bevæger sig, længere nede.
+library(gganimate)
+library(gifski) 
 library(ggplot2)
 library(shiny)
 library(plotly)
