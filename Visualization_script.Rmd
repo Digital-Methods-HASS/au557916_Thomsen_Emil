@@ -22,6 +22,7 @@ library(tidyverse)
 library(gganimate) # This is downloadid in order to make visualizations
 library(shiny) #This is downloaded in order to make interactive visualizations
 library(plotly) #This is also needed for Visualizations
+library(gifski) #This is also needed for Visualizations
 
 ```
 
@@ -51,7 +52,7 @@ options(scipen=999) #By adding this line of code we disable the scientific way o
 ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+ #creating the the plot and deciding what the axis should represent. And setting size of the dots to to be av income.
   geom_point() + #Making the points dots in the visualization
   transition_time(Year) + # The vizualization should change acording to the years
-  labs(title = "Visualization 1: Income and Abortions in {closest_state}", x = "Averidge Income", y = "Abortions per capita in %") + #Giving labels to the visualization.
+  labs(title = "Visualization 1: Income and Abortions in {closest_state}", x = "Average Income", y = "Abortions per capita in %") + #Giving labels to the visualization.
   transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE) +
    theme(axis.text.x = element_text(size = 12), #here we change the size of the labels.
           axis.text.y = element_text(size = 12),

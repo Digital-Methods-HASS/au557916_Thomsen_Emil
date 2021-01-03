@@ -19,17 +19,17 @@ First, start with installing the relevant packages 'tidyverse', 'gganimate', and
 
 ```{r libraries, echo = FALSE}
 library(tidyverse)
-library(gganimate) # Her loades en pakke til at kunne lave visualiseringer
-library(gapminder) #Her loades en pakke, som er et dataset over lande og sundhed.
-library(gifski) # Her loades en pakke, så vi kan vise visualiseringer som bevæger sig, længere nede.
+library(gganimate) # 
+library(gapminder)
+library(gifski) #Loading packeges for visualizations
 ```
 
 ## Look at the data
 First, see which specific years are actually represented in the dataset and what variables are being recorded for each country. Note that when you run the cell below, Rmarkdown will give you two results - one for each line - that you can flip between.
 ```{r}
-unique(gapminder$year) #Vi kigger på de forkomster af af unikke år der er i datasettet gapminder
-head(gapminder) #Her kigges på starten af Gapminder 
-tail(gapminder)
+unique(gapminder$year) #Here I look at the unique times years is displayed in the gapminder dataset
+head(gapminder) #Looking at the start of the gapminder dataset
+tail(gapminder) #Looking at the end of the gapminder dataset
 
 ```
 The dataset contains information on each country in the sampled year, its continent, life expectancy, population, and GDP per capital.
@@ -38,10 +38,10 @@ Let's plot all the countries in 1952.
 ```{r 1952}
 theme_set(theme_bw())  # set theme to white background for better visibility
 
-ggplot(subset(gapminder, year == 1952), aes(gdpPercap, lifeExp, size = pop)) + #Vi bruger ggplot til at lave en visualisering, så bruger vi subset til at sige at vi vil kigge på året 1952 i gapminder datasettet.
-  # aes bruges til at sætte æstetikken, hvor vi siger at gdpPercap skal være x-aksen og lifeExp skal være y. Størelsen på plotsne skal bestemmes af pop (population) dvs. des større pop des større prik i visualiseringen.
+ggplot(subset(gapminder, year == 1952), aes(gdpPercap, lifeExp, size = pop)) + #I use the ggplot to make visualizations. I am using "subset to look at the year year 1952 in the gapminder data set
+  # aes is used to make the astetics. we set gdpPercap as the x-axis, lifeExp the y-axis and pop as the size
   geom_point() + #geom_point() gør at vi får scatter plots altså prikker i vores kordinatsystem
-  scale_x_log10()
+  scale_x_log10() #convert x to log scale
 ```
 We see an interesting spread with an outlier to the right. Answer the following questions, please:
 
@@ -85,7 +85,7 @@ ggplot(subset(gapminder, year == 2007), aes(x = gdpPercap, y = lifeExp, size = p
   #further more we add x and y, so it is easier to change lator in the code.
   geom_point(alpha = 0.5) + # alpha gives us the opportunity to make the points more transparent on a scale from 0 -1
   labs(title = "Coutries in 2007", x = "GDP Per Capita", y = "Life Expectancy") + #Here we use labs to give the visualization a title and rename the x and y axis.
-  scale_x_log10() +
+  scale_x_log10() + # convert x to log scale
   scale_size(range = c(1, 15), name="Population") #Here we scale up the size of the points in the visualization so they are easier to see. Further more we are renaming pop to Population
 
 ```
@@ -93,11 +93,11 @@ ggplot(subset(gapminder, year == 2007), aes(x = gdpPercap, y = lifeExp, size = p
 Q4. What are the five richest countries in the world in 2007?
 
 ```{r, Q4}
-gapminder %>%  
-  filter(year == 2007) %>%  
-  select(country , gdpPercap) %>% 
-  arrange(desc(gdpPercap)) %>%  
-  head(5)
+gapminder %>%  # We look at gapminder and use the pipes (%>%) as arguments for the next lines
+  filter(year == 2007) %>%  #We filter on the year 2007
+  select(country , gdpPercap) %>% #and chose to look at country and gdpPercap
+  arrange(desc(gdpPercap)) %>%  #aranging the data in decending order
+  head(5) #and looking at the first 5.
 
 ```
 By using the almost the same code as in Question 2 and adding head 5 we can show the 5 richest countries in 2007
@@ -191,12 +191,6 @@ Q7 Come up with a question you want to answer using the gapminder data and write
 My question: Which country in Africa had the biggest drop in life expectance and how did that countries dewellopment in life expectancy look in the years from 1952-2007
 
 ```{r Q7}
-# Suedo kode: 
-# Life expectancy ud af x-aksen
-# år op af y-aksen
-#lav det i et søjlediagram
-
-
 africa <- ggplot(subset(gapminder, continent == "Africa"), aes( x = year, y = lifeExp, size = pop)) +
   geom_point() + 
   scale_x_log10() +
@@ -230,10 +224,3 @@ rwanda
 
 
 ```
-
-
-
-
-
-
-
