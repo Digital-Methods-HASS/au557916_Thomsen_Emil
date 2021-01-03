@@ -19,11 +19,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r Loading packeges}
 
 library(tidyverse)
-library(gganimate)
-#library(gifski)
-#library(ggplot2)
-library(shiny)
-#library(plotly)
+library(gganimate) # This is downloadid in order to make visualizations
+library(shiny) #This is downloaded in order to make interactive visualizations
+library(plotly) #This is also needed for Visualizations
 
 ```
 
@@ -36,9 +34,10 @@ Now that we have the tools we need from the library, we will download the data w
 finaldflink <- "https://raw.githubusercontent.com/Digital-Methods-HASS/au557916_Thomsen_Emil/main/final_df.csv"
 
 final_df <- read_csv(url(finaldflink))
+#Loading our final_df from our github repository 
 
 #head(final_df,26)
-
+#Checking if the data set looks as it should
 ```
 
 
@@ -48,12 +47,11 @@ final_df <- read_csv(url(finaldflink))
 The code chunk below uses our final dataset to show the development in abortions per capita in procent along with the average income in the different municipalities in Denmark.
 
 ```{r Visualization 1. Devellopment if income and abortions 1995-2018}
-options(scipen=999) #By adding this line of code we disable the scientific way of writing lables.
-ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+
-  geom_point() + 
- # scale_x_log10() + 
-  transition_time(Year) + 
-  labs(title = "Visualization 1: Income and Abortions in {closest_state}", x = "Averidge Income", y = "Abortions per capita in %") + 
+options(scipen=999) #By adding this line of code we disable the scientific way of numbers, so it is easier to read.
+ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+ #creating the the plot and deciding what the axis should represent. And setting size of the dots to to be av income.
+  geom_point() + #Making the points dots in the visualization
+  transition_time(Year) + # The vizualization should change acording to the years
+  labs(title = "Visualization 1: Income and Abortions in {closest_state}", x = "Averidge Income", y = "Abortions per capita in %") + #Giving labels to the visualization.
   transition_states(Year, transition_length = 12, state_length = 1, wrap = TRUE) +
    theme(axis.text.x = element_text(size = 12), #here we change the size of the labels.
           axis.text.y = element_text(size = 12),
@@ -63,23 +61,25 @@ ggplot(final_df, aes(x = av_Income, y = allAges, size = av_Income))+
 ```
 
 
-
+The three next visualizations are made with shinyApp. The inspiration and help to use it comes from stackoverflow.com:
+https://stackoverflow.com/questions/38917101/how-do-i-show-the-y-value-on-tooltip-while-hover-in-ggplot2 (2017)
 
 This visualization shows the growth in income in the differen municipalities from your 1995 to 2018.
 ```{r Visualization 2. Growth in income per in each municipality}
-ui <- fluidPage(
+ui <- fluidPage( #fluid page creates a layout which is fluid.
     plotlyOutput("distPlot")
 )
 
+
 server <- function(input, output) {
    output$distPlot <- renderPlotly({
-      qplot(x = av_Income, y = Year, size = av_Income, color = Municipalities, data = final_df) + 
-       labs(title = "Visualization 2: Income growth", x = "Average Income in Municipalities", y = "Years")+
-      geom_point()
+      qplot(x = av_Income, y = Year, size = av_Income, color = Municipalities, data = final_df) +  #Here we use a quick plot
+       labs(title = "Visualization 2: Income growth", x = "Average Income in Municipalities", y = "Years")+ #making titles
+      geom_point() #Sets the points to dots.
    })
 }
 
-shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server) #We run our shiny app.
 
 ```
 
