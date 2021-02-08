@@ -1,0 +1,96 @@
+---
+title: "Spatial_HW1"
+author: "Emil Buus Thomsen"
+date: "5/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) #A package for cleaning
+library(leaflet)
+library(htmltools)
+library(htmlwidgets)
+```
+
+1. Answer: Describe a problem or question in your field for which spatial analysis could be applicable:
+
+For my final project in Intro to CDS, I worked on a project investigating abortions per capita distributed in danish municipalities. This project could be expanded on using spatial analysis.
+___________________________________________________________________________________________________________________________________________________
+
+
+
+
+
+2. Answer: List 5 data layers that you think are necessary to answer your question/solve your problem. Find on the internet github and then describe examples of two or three of your listed layers:
+
+Layer:
+
+1. addMarkers()
+2. addPolygons()
+3. addTiles()
+4. highligtOptions()
+5. addPopups()
+
+addTiles(): can be used to decide which kind of map to use for the project. I would use it to make a simpel map over Denmark.
+
+
+addPolygons(): can as the name suggests add polygons to the map. This can be used to add interaction with the map. so when you click on a municipality you are able to interact with it. Further more we can add color to the map and thereby make the color of the municipality darker, the more abortions pr. person there is in the given municipality.
+
+
+
+
+```{r }
+RCFeature <- read_csv(file = "RCFeature.csv") #Loading the file into R
+
+head(RCFeature)#Checking how the file looks.
+
+help("addPolygons")
+```
+
+
+
+3. Code: Your colleague has found some ruins during a hike in the Blue Mountains and recorded the coordinates of structures on her phone(RCFeature.csv). She would like to map her points but has no computer or mapping skills. Can you make a map that she can work with using only a browser? She needs an interactive map that she can download to her computer and use straightaway.
+
+
+4. Create a standalone .html map in Leaflet showing at least basic topography and relief, and load in the table of points. Make sure she can see the FeatureID, FeatureType and Description attributes when she hovers over the point markers. 
+
+5. Consider adding elements such as minimap() and measure() for easier map interaction
+
+6. Explore differentiating the markers (e.g. by size using Accuracy field)
+
+7. Explore the option of clustering markers with addMarkers(clusterOptions = markerClusterOptions()). Do you recommend marker clustering here?
+
+
+
+
+
+
+
+
+```{r }
+
+colleague_map <- leaflet() %>% 
+  addTiles() %>%
+  addMarkers(lng = RCFeature$Longitude, #setting longtitude and latitude to the koordinates of the dataset 
+             lat = RCFeature$Latitude,
+             label = paste("Description:", RCFeature$Description, "|", 
+                           "ID:", RCFeature$FeatureID, "|",
+                           "Type:", RCFeature$FeatureType)) %>% #Using label here instead of "popup" so we can make a hover function to our point which consists of Description, ID and Type.
+  addMeasure() %>% #adding the measure funktion, so it is posible to messure distances on the map.
+  addMiniMap(width = 120, height=80) %>% #creating a minimap in the down right corner.
+  addProviderTiles("Esri.WorldPhysical", group = "Physical") %>% 
+  addProviderTiles("Esri.WorldImagery", group = "Aerial") %>% 
+  addProviderTiles("MtbMap", group = "Geo") %>%  #Making it posible to change between different style of maps.
+  
+addLayersControl(
+  baseGroups = c("Geo","Aerial", "Physical"), #these are the ones that can be chosen between.
+  options = layersControlOptions(collapsed = T))
+  
+colleague_map
+
+
+library(htmlwidgets)
+saveWidget(colleague_map, "colleague_map.html", selfcontained = TRUE)
+
+```
