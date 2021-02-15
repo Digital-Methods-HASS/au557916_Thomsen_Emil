@@ -1,2 +1,4 @@
-Download the file in this folder and uploaded to your notebook or src folder.
-Then in the terminal, navigate to the file and activate it on windows by typing python collocate.py
+Download the file in this folder and uploaded to your notebook or src folder in your own jupitor notebook.
+Then in the terminal, navigate to the file and activate it by typing "python collocate.py". (if you are working on windows, I am not sure what macs do.)
+The program is using the corpus with the 100 english novels, so the path on in your jupitor notbook should be the same as in mine.
+
