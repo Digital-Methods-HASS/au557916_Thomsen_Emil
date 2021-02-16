@@ -30,6 +30,11 @@ def tokenize(input_string):
     return token_list
 
 #Concordance lines
+
+#Deffining a function with the following parameters:
+    # text = text file of the
+    # keyword = The word we are centuring the collocation around.
+    # Window_size = the number of characters that comes before the word. if nothing is put in it will be 50
 def kwic(text, keyword, window_size=50):
     
     lines = [] #creating an empty list, to contain the lines gathered from the function, when they have been through the for-loop
