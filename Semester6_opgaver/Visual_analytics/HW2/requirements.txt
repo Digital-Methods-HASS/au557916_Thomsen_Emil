@@ -1,0 +1,3 @@
+The easiest way to test the script is to download the file and upload it to your own jupitor notebook <br>
+
+You might want to check that the data_path to the flowers data-set is directed to where you placed it.
